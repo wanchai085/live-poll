@@ -8,38 +8,41 @@
         @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap');
         
         :root {
-            --color-time: #3498db;
-            --color-fear: #e74c3c;
-            --color-support: #2ecc71;
-            --color-other: #9b59b6;
+            --color-time: #3498db;      /* เวลา */
+            --color-fear: #e74c3c;      /* ความกลัว */
+            --color-support: #2ecc71;  /* การสนับสนุน */
+            --color-other: #9b59b6;     /* อื่นๆ */
         }
 
         body {
             font-family: 'Sarabun', sans-serif;
             background-color: #f0f2f5;
             margin: 0;
-            padding: 10px; /* ลด padding สำหรับมือถือ */
+            padding: 20px;
             color: #333;
         }
         .container {
             display: flex;
-            flex-direction: column; /* ค่าเริ่มต้นเป็นแนวตั้งสำหรับมือถือ */
-            gap: 20px;
-            width: 100%;
+            flex-direction: row-reverse; /* สลับข้าง ให้เหตุผลอยู่ซ้าย */
+            flex-wrap: wrap;
+            gap: 25px;
             max-width: 1400px;
             margin: auto;
         }
-        .sidebar-column, .main-column {
-            width: 100%;
-        }
-        .sidebar-column {
+        .sidebar-column { /* คอลัมน์สำหรับสรุปผล */
+            flex: 1;
+            min-width: 300px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 25px;
+        }
+        .main-column { /* คอลัมน์สำหรับเหตุผล */
+            flex: 2.5;
+            min-width: 400px;
         }
         .card {
             background-color: white;
-            padding: 20px;
+            padding: 25px 30px;
             border-radius: 12px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.08);
         }
@@ -48,13 +51,13 @@
             color: #2c3e50;
             border-bottom: 2px solid #e0e0e0;
             padding-bottom: 10px;
-            font-size: 1.4em;
+            font-size: 1.5em;
         }
 
         /* --- Styling for Summary Cards --- */
         .results { margin-top: 20px; }
         .result-item { margin-bottom: 18px; }
-        .result-label { display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: bold; font-size: 0.95em; }
+        .result-label { display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: bold; }
         .result-bar-container { background-color: #ecf0f1; border-radius: 20px; height: 22px; overflow: hidden;}
         .result-bar-inner { height: 100%; width: 0%; border-radius: 20px; transition: width 0.5s ease-in-out; text-align: right; color: white; font-size: 12px; line-height: 22px; padding-right: 10px; box-sizing: border-box;}
         #option1-bar { background: var(--color-time); }
@@ -67,29 +70,33 @@
 
         /* --- Styling for Main Reason Feed --- */
         .reasons-container {
-            height: auto; /* บนมือถือให้ความสูงเป็นไปตามเนื้อหา */
+            height: 85vh;
+            display: flex;
+            flex-direction: column;
         }
         .reasons-feed {
-            /* ไม่ต้องกำหนดความสูงตายตัวบนมือถือ */
+            overflow-y: auto;
+            flex-grow: 1;
+            padding-right: 15px;
         }
         .reason-card {
             background: #ffffff;
             border: 1px solid #e9e9e9;
             border-left-width: 6px;
             border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 15px;
+            padding: 18px 22px;
+            margin-bottom: 18px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
             animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .reason-card p.reason-text {
-            font-size: 1.1em;
+            font-size: 1.25em;
             margin: 0 0 10px 0;
             line-height: 1.5;
             color: #2c3e50;
         }
         .reason-card .meta {
-            font-size: 0.85em;
+            font-size: 0.9em;
             color: #7f8c8d;
             display: flex;
             justify-content: space-between;
@@ -105,66 +112,129 @@
             0% { opacity: 0; transform: scale(0.8) translateY(20px); }
             100% { opacity: 1; transform: scale(1) translateY(0); }
         }
-
-        /* --- MEDIA QUERY FOR DESKTOP --- */
-        /* เมื่อหน้าจอกว้างกว่า 992px ให้ใช้สไตล์นี้ */
-        @media (min-width: 992px) {
-            body {
-                padding: 25px; /* เพิ่ม padding กลับมา */
-            }
-            .container {
-                flex-direction: row-reverse; /* กลับไปเป็น 2 คอลัมน์ */
-            }
-            .main-column {
-                flex: 2.5;
-            }
-            .sidebar-column {
-                flex: 1;
-            }
-            .reasons-container {
-                height: 85vh; /* กำหนดความสูงให้ฟีดเลื่อนได้ */
-                display: flex;
-                flex-direction: column;
-            }
-            .reasons-feed {
-                overflow-y: auto; /* ทำให้เลื่อนได้ */
-                flex-grow: 1;
-                padding-right: 15px;
-            }
-        }
     </style>
 </head>
 <body>
-    <!-- เนื้อหา HTML และ JavaScript เหมือนเดิม ไม่มีการเปลี่ยนแปลง -->
-    <div class="container">
-        <div class="sidebar-column">
-            <div class="card poll-container">
-                <!-- ... โค้ดเดิมสำหรับกราฟสรุป ... -->
-            </div>
-            <div class="card other-votes-container">
-                 <!-- ... โค้ดเดิมสำหรับรายการอื่นๆ ... -->
+
+<div class="container">
+    <div class="sidebar-column">
+        <div class="card poll-container">
+            <h2>สรุปผลโหวต</h2>
+            <div class="results">
+                <div class="result-item"><div class="result-label"><span>เวลา</span><span id="option1-count">0%</span></div><div class="result-bar-container"><div id="option1-bar" class="result-bar-inner"></div></div></div>
+                <div class="result-item"><div class="result-label"><span>ความกลัว</span><span id="option2-count">0%</span></div><div class="result-bar-container"><div id="option2-bar" class="result-bar-inner"></div></div></div>
+                <div class="result-item"><div class="result-label"><span>การสนับสนุน</span><span id="option3-count">0%</span></div><div class="result-bar-container"><div id="option3-bar" class="result-bar-inner"></div></div></div>
             </div>
         </div>
-        <div class="main-column">
-            <div class="card reasons-container">
-                <!-- ... โค้ดเดิมสำหรับฟีดเหตุผล ... -->
+        <div class="card other-votes-container">
+             <h2>อุปสรรคอื่นๆ</h2>
+             <ul class="other-votes-list" id="other-votes-list">
+                <li><span>กำลังรอข้อมูล...</span></li>
+             </ul>
+        </div>
+    </div>
+    <div class="main-column">
+        <div class="card reasons-container">
+            <h2>เหตุผลจากคุณครู (สด)</h2>
+            <div class="reasons-feed" id="reasons-feed">
+                <!-- เหตุผลจะถูกเพิ่มเข้ามาที่นี่ -->
             </div>
         </div>
     </div>
+</div>
+
+    <!-- Firebase Libraries -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
     <script>
-        const firebaseConfig = { /* วาง Config ของคุณที่นี่ */ };
-        // ... JavaScript ทั้งหมดเหมือนเดิม ...
+        const firebaseConfig = {
+            apiKey: "AIzaSyCm5VlyrkTWe4IT2FgTCwkxWaDb7qNmgY8",
+            authDomain: "my-live-poll-1be77.firebaseapp.com",
+            databaseURL: "https://my-live-poll-1be77-default-rtdb.firebaseio.com",
+            projectId: "my-live-poll-1be77",
+            storageBucket: "my-live-poll-1be77.appspot.com",
+            messagingSenderId: "436007953959",
+            appId: "1:436007953959:web:bbd1f457cee48d79f89002",
+            measurementId: "G-HG9LJMG3NN"
+        };
+
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
-        const optionMap = { /* ... โค้ดเดิม ... */ };
-        database.ref('votes').on('value', snapshot => { /* ... โค้ดเดิม ... */ });
-        database.ref('reasons').orderByChild('timestamp').limitToLast(50).on('child_added', snapshot => { /* ... โค้ดเดิม ... */ });
-        database.ref('other_votes').orderByChild('count').on('value', snapshot => { /* ... โค้ดเดิม ... */ });
-        function updateVoteCounts(votes) { /* ... โค้ดเดิม ... */ }
-        function addReasonToFeed(data) { /* ... โค้ดเดิม ... */ }
-        function updateOtherVotes(votes) { /* ... โค้ดเดิม ... */ }
+        
+        const optionMap = {
+            'เวลา': 'option1',
+            'ความกลัว': 'option2',
+            'การสนับสนุน': 'option3'
+        };
+
+        // 1. ฟังคะแนนโหวตหลัก
+        database.ref('votes').on('value', snapshot => {
+            const votes = snapshot.val() || {};
+            updateVoteCounts(votes);
+        });
+
+        // 2. ฟังเหตุผลใหม่ๆ
+        database.ref('reasons').orderByChild('timestamp').limitToLast(50).on('child_added', snapshot => {
+            addReasonToFeed(snapshot.val());
+        });
+
+        // 3. ฟังคะแนนโหวต "อื่นๆ"
+        database.ref('other_votes').orderByChild('count').on('value', snapshot => {
+            updateOtherVotes(snapshot.val());
+        });
+
+        function updateVoteCounts(votes) {
+            const mainVotes = {
+                option1: votes.option1 || 0,
+                option2: votes.option2 || 0,
+                option3: votes.option3 || 0
+            };
+            const totalVotes = Object.values(mainVotes).reduce((a, b) => a + b, 0);
+
+            for (const key in mainVotes) {
+                const count = mainVotes[key];
+                const percentage = totalVotes === 0 ? 0 : Math.round((count / totalVotes) * 100);
+                document.getElementById(`${key}-count`).innerText = `${percentage}%`;
+                document.getElementById(`${key}-bar`).style.width = `${percentage}%`;
+                document.getElementById(`${key}-bar`).innerText = `${count} โหวต`;
+            }
+        }
+
+        function addReasonToFeed(data) {
+            const feedContainer = document.getElementById('reasons-feed');
+            const card = document.createElement('div');
+            
+            // หาคลาสสีจากข้อความที่เลือก
+            let choiceClass = optionMap[data.optionText] || 'option_other';
+            card.className = `reason-card ${choiceClass}`;
+            
+            card.innerHTML = `
+                <p class="reason-text">“${data.reason}”</p>
+                <div class="meta">
+                    <span class="choice">จากคนที่เลือก: ${data.optionText}</span>
+                    <span class="time">${new Date(data.timestamp).toLocaleTimeString('th-TH')}</span>
+                </div>
+            `;
+            feedContainer.prepend(card);
+        }
+
+        function updateOtherVotes(votes) {
+            const list = document.getElementById('other-votes-list');
+            list.innerHTML = '';
+            if (!votes) {
+                list.innerHTML = '<li><span>ยังไม่มีการเสนอความเห็นอื่นๆ</span></li>';
+                return;
+            }
+
+            const sortedVotes = Object.values(votes).sort((a, b) => b.count - a.count);
+
+            sortedVotes.forEach(vote => {
+                const item = document.createElement('li');
+                item.innerHTML = `<span>${vote.text}</span> <strong>${vote.count} โหวต</strong>`;
+                list.appendChild(item);
+            });
+        }
     </script>
 </body>
 </html>
