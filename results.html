@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ผลโหวตสด</title>
+    <style>
+        /* CSS เหมือนเดิม */
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap');
+        body { font-family: 'Sarabun', sans-serif; background-color: #f4f4f9; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; color: #333; }
+        .poll-container { background-color: white; padding: 25px 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); width: 90%; max-width: 500px; text-align: center; }
+        h2 { margin-top: 0; color: #2c3e50; }
+        .results { margin-top: 30px; text-align: left; }
+        .result-item { margin-bottom: 15px; }
+        .result-label { display: flex; justify-content: space-between; margin-bottom: 5px; font-weight: bold; }
+        .result-bar-container { background-color: #ecf0f1; border-radius: 5px; height: 20px; overflow: hidden; }
+        .result-bar-inner { height: 100%; width: 0%; border-radius: 5px; transition: width 0.5s ease-in-out; }
+    </style>
+</head>
+<body>
+    <div class="poll-container">
+        <h2>ผลโหวตสด: คุณชอบผลไม้ชนิดไหน?</h2>
+        <div class="results">
+            <!-- ผลลัพธ์ของตัวเลือกที่ 1 -->
+            <div class="result-item">
+                <div class="result-label"><span>แอปเปิ้ล</span><span id="option1-count">0 โหวต (0%)</span></div>
+                <div class="result-bar-container"><div class="result-bar-inner" id="option1-bar" style="background-color: #2ecc71;"></div></div>
+            </div>
+            <!-- ผลลัพธ์ของตัวเลือกที่ 2 -->
+            <div class="result-item">
+                <div class="result-label"><span>ส้ม</span><span id="option2-count">0 โหวต (0%)</span></div>
+                <div class="result-bar-container"><div class="result-bar-inner" id="option2-bar" style="background-color: #e67e22;"></div></div>
+            </div>
+            <!-- ผลลัพธ์ของตัวเลือกที่ 3 -->
+            <div class="result-item">
+                <div class="result-label"><span>องุ่น</span><span id="option3-count">0 โหวต (0%)</span></div>
+                <div class="result-bar-container"><div class="result-bar-inner" id="option3-bar" style="background-color: #9b59b6;"></div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase Libraries -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+    <script>
+        //  ****** วาง firebaseConfig เดียวกันกับไฟล์แรก ตรงนี้! ******
+       const firebaseConfig = {
+  apiKey: "AIzaSyCm5VlyrkTWe4IT2FgTCwkxWaDb7qNmgY8",
+  authDomain: "my-live-poll-1be77.firebaseapp.com",
+  databaseURL: "https://my-live-poll-1be77-default-rtdb.firebaseio.com",
+  projectId: "my-live-poll-1be77",
+  storageBucket: "my-live-poll-1be77.firebasestorage.app",
+  messagingSenderId: "436007953959",
+  appId: "1:436007953959:web:bbd1f457cee48d79f89002",
+  measurementId: "G-HG9LJMG3NN"
+};
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const votesRef = database.ref('votes');
+
+        // ฟังก์ชันนี้จะทำงานทุกครั้งที่ข้อมูลใน Firebase เปลี่ยน!
+        votesRef.on('value', (snapshot) => {
+            const votes = snapshot.val() || { option1: 0, option2: 0, option3: 0 };
+            updateResults(votes);
+        });
+
+        function updateResults(votes) {
+            const totalVotes = (votes.option1 || 0) + (votes.option2 || 0) + (votes.option3 || 0);
+
+            for (let option in votes) {
+                const count = votes[option] || 0;
+                const percentage = totalVotes === 0 ? 0 : Math.round((count / totalVotes) * 100);
+
+                document.getElementById(`${option}-count`).innerText = `${count} โหวต (${percentage}%)`;
+                document.getElementById(`${option}-bar`).style.width = `${percentage}%`;
+            }
+        }
+    </script>
+</body>
+</html>
