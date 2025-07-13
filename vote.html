@@ -14,66 +14,76 @@
         .vote-btn { background-color: #3498db; color: white; border: none; padding: 12px 15px; border-radius: 8px; font-size: 16px; cursor: pointer; transition: background-color 0.3s, transform 0.2s; }
         .vote-btn:hover { background-color: #2980b9; }
         .vote-btn.selected { background-color: #2980b9; transform: scale(1.05); box-shadow: 0 0 15px rgba(52, 152, 219, 0.5); }
-        .reason-section { margin-top: 25px; display: none; /* ซ่อนไว้ก่อน */ }
-        textarea { width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: 'Sarabun', sans-serif; font-size: 16px; margin-bottom: 15px; }
+        .other-option-section, .reason-section { margin-top: 25px; display: none; }
+        input[type="text"], textarea { width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: 'Sarabun', sans-serif; font-size: 16px; margin-bottom: 15px; }
         .submit-btn { background-color: #2ecc71; color: white; border: none; padding: 12px 15px; border-radius: 8px; font-size: 16px; cursor: pointer; width: 100%; }
-        #thank-you-message { color: #2ecc71; font-weight: bold; font-size: 1.2em; margin-top: 20px; display: none; }
+        #thank-you-message { display: none; text-align: center; }
     </style>
 </head>
 <body>
 
     <div class="poll-container" id="poll-container">
-        <h2>"อะไรคือ 'กำแพงเมืองจีน' ที่ยังขวางกั้นเรา ไม่ให้ส่งมอบอาวุธนี้ไปถึงคุณครูทั่วประเทศ?"</h2>
+        <h2>อุปสรรคที่ใหญ่ที่สุดของคุณครูในการนำเครื่องมือนี้ไปใช้ คืออะไร?</h2>
         <div class="options">
-            <button class="vote-btn" data-option="option1" onclick="selectOption(this)">เวลา</button>
-            <button class="vote-btn" data-option="option2" onclick="selectOption(this)">ความกลัว</button>
-            <button class="vote-btn" data-option="option3" onclick="selectOption(this)">การสนับสนุน</button>
+            <button class="vote-btn" data-option="option1" onclick="selectOption(this, 'เวลา')">เวลา</button>
+            <button class="vote-btn" data-option="option2" onclick="selectOption(this, 'ความกลัว')">ความกลัว</button>
+            <button class="vote-btn" data-option="option3" onclick="selectOption(this, 'การสนับสนุน')">การสนับสนุน</button>
+            <button class="vote-btn" data-option="option_other" onclick="selectOption(this, 'อื่นๆ')">อื่นๆ (โปรดระบุ)</button>
+        </div>
+
+        <div class="other-option-section" id="other-option-section">
+            <label for="other-text"><strong>โปรดระบุอุปสรรคอื่นๆ:</strong></label>
+            <input type="text" id="other-text">
         </div>
 
         <div class="reason-section" id="reason-section">
             <label for="reason-text"><strong>เหตุผลสั้นๆ ที่คุณเลือก:</strong></label>
-            <textarea id="reason-text" rows="3" placeholder="เช่น เพราะไม่มีเวลาเตรียมการสอน..."></textarea>
+            <textarea id="reason-text" rows="3"></textarea>
             <button class="submit-btn" onclick="submitVote()">ส่งคะแนนโหวตและเหตุผล</button>
         </div>
-
-        <div id="thank-you-message">
-            <h3>ขอบคุณสำหรับคะแนนโหวตและเหตุผล!</h3>
-            <p>คุณสามารถดูผลโหวตสดได้จากหน้าจอหลัก</p>
-        </div>
     </div>
+    
+    <div id="thank-you-message">
+        <h2>ขอบคุณสำหรับคะแนนโหวต!</h2>
+        <p>กำลังนำท่านไปยังหน้าผลโหวต...</p>
+    </div>
+
 
     <!-- Firebase Libraries -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyCm5VlyrkTWe4IT2FgTCwkxWaDb7qNmgY8",
-            authDomain: "my-live-poll-1be77.firebaseapp.com",
-            databaseURL: "https://my-live-poll-1be77-default-rtdb.firebaseio.com",
-            projectId: "my-live-poll-1be77",
-            storageBucket: "my-live-poll-1be77.firebasestorage.app",
-            messagingSenderId: "436007953959",
-            appId: "1:436007953959:web:bbd1f457cee48d79f89002",
-            measurementId: "G-HG9LJMG3NN"
-        };
+        const firebaseConfig = { /* ... วาง Config เดิมของคุณ ... */ };
 
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
         
         let selectedOption = null;
+        let selectedOptionText = '';
 
-        function selectOption(button) {
+        function selectOption(button, text) {
             document.querySelectorAll('.vote-btn').forEach(btn => btn.classList.remove('selected'));
             button.classList.add('selected');
             selectedOption = button.getAttribute('data-option');
+            selectedOptionText = text;
+
+            // แสดง/ซ่อน ช่องกรอก "อื่นๆ"
+            document.getElementById('other-option-section').style.display = (selectedOption === 'option_other') ? 'block' : 'none';
+            // แสดงช่องกรอกเหตุผล
             document.getElementById('reason-section').style.display = 'block';
         }
 
         function submitVote() {
             const reasonText = document.getElementById('reason-text').value.trim();
+            const otherText = document.getElementById('other-text').value.trim();
+
             if (!selectedOption) {
                 alert('กรุณาเลือกตัวเลือกก่อนครับ');
+                return;
+            }
+            if (selectedOption === 'option_other' && otherText === "") {
+                alert('กรุณาระบุอุปสรรคอื่นๆ ครับ');
                 return;
             }
             if (reasonText === "") {
@@ -81,20 +91,45 @@
                 return;
             }
 
+            // ซ่อนฟอร์มโหวต แสดงข้อความขอบคุณ
             document.getElementById('poll-container').style.display = 'none';
-            document.body.innerHTML += '<div id="thank-you-message" style="display:block; text-align:center;"><h2>ขอบคุณสำหรับคะแนนโหวตและเหตุผล!</h2><p>คุณสามารถดูผลโหวตสดได้จากหน้าจอหลัก</p></div>';
+            document.getElementById('thank-you-message').style.display = 'block';
 
-            // 1. เพิ่มคะแนนรวม
-            const voteRef = database.ref('votes/' + selectedOption);
-            voteRef.transaction(currentVotes => (currentVotes || 0) + 1);
+            // จัดการข้อมูลที่จะส่ง
+            let voteTargetRef;
+            let voteDataText = selectedOptionText;
 
-            // 2. เพิ่มเหตุผลลงในรายการ
-            const reasonsRef = database.ref('reasons');
-            reasonsRef.push({
-                option: selectedOption,
-                text: reasonText,
+            if (selectedOption === 'option_other') {
+                // สำหรับ "อื่นๆ" เราจะเก็บในโหนดแยก
+                voteTargetRef = database.ref('other_votes').child(otherText.toLowerCase()); // ใช้ toLowerCase เพื่อรวมคะแนนที่เหมือนกัน
+                voteDataText = otherText;
+            } else {
+                // สำหรับตัวเลือกหลัก
+                voteTargetRef = database.ref('votes/' + selectedOption);
+            }
+
+            // 1. เพิ่มคะแนน
+            voteTargetRef.transaction(currentData => {
+                if(selectedOption === 'option_other') {
+                    // ถ้าเป็นโหนดอื่นๆ ให้เก็บทั้งข้อความและคะแนน
+                    let count = (currentData && currentData.count) ? currentData.count + 1 : 1;
+                    return { text: otherText, count: count };
+                }
+                // ถ้าเป็นโหนดหลัก นับคะแนนอย่างเดียว
+                return (currentData || 0) + 1;
+            });
+
+            // 2. เพิ่มเหตุผล
+            database.ref('reasons').push({
+                optionText: voteDataText,
+                reason: reasonText,
                 timestamp: firebase.database.ServerValue.TIMESTAMP
             });
+
+            // 3. หน่วงเวลา 3 วินาที แล้วไปหน้าผลลัพธ์
+            setTimeout(() => {
+                window.location.href = 'results.html'; // หรือใส่ URL เต็มของหน้า results ของคุณ
+            }, 3000); 
         }
     </script>
 </body>
